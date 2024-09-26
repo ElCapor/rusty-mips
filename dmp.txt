@@ -1,0 +1,12 @@
+/*AUTOGEN*/
+enum OPCODE {
+	HALT=0,
+	ADD=1,
+	SUB=2,
+	LW=3,
+	SW=4,
+	BEQ=5,
+	ADDIB=6,
+	ADDIW=7,
+	ADDID=8,
+}

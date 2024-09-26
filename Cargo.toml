@@ -1,0 +1,12 @@
+[package]
+name = "rusty-mips"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5.18", features = ["derive"] }
+egui = "0.28.1"
+eframe = "0.28.1"
+strum = { version = "0.26", features = ["derive"] }
+puffin = "0.19.1"
+puffin_egui = "0.29.0"
