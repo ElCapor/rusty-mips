@@ -27,19 +27,50 @@ enum OpType {
     IMM, // Immediate (byte)
     IMM2, // Immediate (word)
     IMM4, // Immediate (dword)
+    UIMM, // Immediate unsigned (byte)
+    UIMM2, // Immediate unsigned (word)
+    UIMM4  // Immediate unsigned (dword)
 }
 
 const INSTRUCTIONS: &[(&str, &[OpType])] = &[
     ("halt", &[]),
+
+    /*Arithmetic Operations */
+    /* Addition */
     ("add", &[OpType::R, OpType::R, OpType::R]),
+    ("addu", &[OpType::R, OpType::R, OpType::R, OpType::R]),
+    ("addi", &[OpType::R, OpType::R, OpType::IMM4]),
+    ("addiu", &[OpType::R, OpType::R, OpType::UIMM4]),
+
+    /* Substraction */
     ("sub", &[OpType::R, OpType::R, OpType::R]),
+    ("subu", &[OpType::R, OpType::R, OpType::R]),
+    ("subi", &[OpType::R, OpType::R, OpType::IMM4]),
+    ("subiu", &[OpType::R, OpType::R, OpType::UIMM4]),
+
+    /* Division */
+    ("div", &[OpType::R, OpType::R]),
+    ("divu", &[OpType::R, OpType::R]),
+
+    /* Multiplication */
+    ("mult", &[OpType::R, OpType::R]),
+    ("multu", &[OpType::R, OpType::R]),
+
+    /* Logical Operations*/
+    ("and", &[OpType::R, OpType::R, OpType::R]),
+    ("andi", &[OpType::R, OpType::R, OpType::IMM4]),
+    ("or", &[OpType::R, OpType::R, OpType::R]),
+    ("nor", &[OpType::R, OpType::R, OpType::R]),
+    ("ori", &[OpType::R, OpType::R, OpType::IMM4]),
+    ("xor", &[OpType::R, OpType::R, OpType::R]),
+    ("xori", &[OpType::R, OpType::R, OpType::IMM4]),
+
+    /* Data Move Operations */
     ("lw", &[OpType::R, OpType::IMM]),
     ("sw", &[OpType::R, OpType::IMM]),
+
     ("beq", &[OpType::R, OpType::R, OpType::IMM]),
-    ("addib", &[OpType::R, OpType::R, OpType::IMM]),
-    ("addiw", &[OpType::R, OpType::R, OpType::IMM2]),
-    ("addid", &[OpType::R, OpType::R, OpType::IMM4]),
-    ("bneq", &[OpType::R, OpType::R, OpType::IMM])
+    ("bneq", &[OpType::R, OpType::R, OpType::IMM]),
 ];
 
 fn register_to_bin(reg: &str) -> Result<u8, String> {
@@ -100,6 +131,24 @@ fn assemble_instruction(instruction: &str) -> Result<Vec<u8>, String> {
                 let imm: i32 = parts[i+1]
                 .parse()
                 .map_err(|_| "Invalid imm4".to_string())?;
+                assembled_instruction.extend(imm.to_le_bytes().iter());
+            }
+            OpType::UIMM => {
+                let imm: u8 = parts[i+1]
+                .parse()
+                .map_err(|_| "Invalid uimm".to_string())?;
+                assembled_instruction.extend(imm.to_le_bytes().iter());
+            }
+            OpType::UIMM2 => {
+                let imm: u16 = parts[i+1]
+                .parse()
+                .map_err(|_| "Invalid uimm2".to_string())?;
+                assembled_instruction.extend(imm.to_le_bytes().iter());
+            }
+            OpType::UIMM4 => {
+                let imm: u32 = parts[i+1]
+                .parse()
+                .map_err(|_| "Invalid uimm4".to_string())?;
                 assembled_instruction.extend(imm.to_le_bytes().iter());
             }
         }
